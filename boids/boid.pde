@@ -34,7 +34,7 @@ class boid{
  PVector desiredVelRand(PVector target){
    PVector start= PVector.sub(target, position);
    start.normalize();
-   start.mult(40);
+   start.mult(50);
    start.x= position.x+start.x+ 40*cos(radians(random(360)));
    start.y= position.y+start.y+40*sin(radians(random(360)));
    start=start.sub(start, position);
@@ -60,8 +60,8 @@ class boid{
  
  void drawMe(){
 
-   fill(a, b, c, 140);
    float size= map(maxspeed, speedLow, speedHigh, 3.2, 2);
+   fill(a, b, c, 140);
    ellipse(position.x, position.y, size, size);  
    
  }

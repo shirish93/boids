@@ -1,20 +1,25 @@
 
 boid proto;
 
-float forceLow=0.02;
-float forceHigh=0.12;
+float forceLow=.1;
+float forceHigh=0.8;
 float speedLow=4;
 float speedHigh=13;
-boid[] gang;
+boid[] gang; 
 int numParticles;
 void setup(){
+  //frameRate(90);
   size(1000,700);
   noStroke();
-  numParticles=7500;
+  numParticles=15000;
   gang= new boid[numParticles];
+  float counter=0;
   for (int i=0; i<numParticles; i++){
     gang[i]=new boid(random(width), random(height));
 //    gang[i].setMax((random(8)+3), (random(0.07)+0.01) ); 
+    counter+=0.01;
+    float val= map(noise(counter), 0, 1, forceLow, forceHigh);
+      //  gang[i].setMax((random(speedHigh)+speedLow), val ); 
     gang[i].setMax((random(speedHigh)+speedLow), (random(forceHigh)+forceLow) ); 
   }
   background(255);
@@ -87,33 +92,14 @@ class boid{
  
  void goTo(PVector target){
 
-  //  PVector desired= desiredVelRand(target);
-      PVector desired=PVector.sub(target,  position);
-/*   if (position.x<25){
-     desired=new PVector(maxspeed, velocity.y);     
-   }*/
-
-
-
-
-
- // if (desired==undefined){
-   // desired= new PVector(1,1);
- // }
+   // PVector desired= desiredVelRand(target);
+    PVector desired=PVector.sub(target,  position);
     float d = desired.mag();
-   
-   desired.normalize();
-   
-   if (d<100){
-     float m = map(d, 0, 100, 0, maxspeed);
-     desired.mult(m); 
-   }
-   else{
-     desired.mult(maxspeed);
-   }
-   PVector steer = PVector.sub(desired, velocity);
-   steer.limit(maxforce);
-   applyForce(steer);
+    desired.normalize();
+    desired.mult(50);
+    PVector steer = PVector.sub(desired, velocity);
+    steer.limit(maxforce);
+    applyForce(steer);
    
  }
  
@@ -123,8 +109,8 @@ class boid{
  
  void drawMe(){
 
-   fill(a, b, c, 200);
-   float size= map(maxspeed, speedLow, speedHigh, 3, 2);
+   fill(a, b, c, 140);
+   float size= map(maxspeed, speedLow, speedHigh, 3.2, 2);
    ellipse(position.x, position.y, size, size);  
    
  }
