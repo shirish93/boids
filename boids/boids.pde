@@ -1,20 +1,19 @@
 
 boid proto;
 
-float forceLow=.3;
-float forceHigh=0.9;
-float speedLow=4;
-float speedHigh=12;
+float forceLow=.03;
+float forceHigh=.09;
+float speedLow=2;
+float speedHigh=3;
 boid[] gang; 
 HashMap lookup;
 
 int numParticles;
 void setup(){
   //frameRate(90);
-  size(1000,700);
+  size(1400,700);
   noStroke();
-  lookup = new HashMap();
-  numParticles=10000;
+  numParticles=500;
   gang= new boid[numParticles];
   float counter=0;
   for (int i=0; i<numParticles; i++){
@@ -24,7 +23,10 @@ void setup(){
   }
   background(255);
   fill(0);
+  chase=new PVector(mouseX, mouseY);
 }
+
+PVector chase;
 
 
 
@@ -32,19 +34,31 @@ void draw(){
  // background(255);
 //  background(128, 128, 128, .2);
   fill(255, 255, 255, 140);
+  beginShape();
   rect(0,0, width, height);
-  for (int i=0; i<numParticles; i++){
+    gang[0].updatePos();
+    gang[0].drawMe();
+    chase.x=mouseX;
+    chase.y=mouseY;
+    
+    gang[0].goTo(chase);
+  for (int i=1; i<numParticles; i++){
     gang[i].updatePos();
     gang[i].drawMe();
-    gang[i].goTo(new PVector(mouseX, mouseY)); 
-    
+    gang[i].separate();
+    //chase.x=mouseX;
+    //chase.y=mouseY;
+   // gang[i].goTo(gang[i-1].getPos()); 
+    gang[i].goTo(chase);
   }
+ 
+  
  
 }
 
 void mouseMoved(){
     for (int i=0; i<numParticles; i++){
-      gang[i].goTo(new PVector(mouseX, mouseY)); 
+//      gang[i].goTo(new PVector(mouseX, mouseY)); 
   }
 }
 void mouseClicked(){

@@ -26,8 +26,8 @@ class boid{
  void setMax(float speed, float force){
   maxspeed=speed;
   maxforce=force;
-  a= map(maxforce, forceLow, forceHigh, 0, 255);
-  b= map(maxspeed, speedLow, speedHigh, 0, 255); 
+  a= map(maxforce, forceLow, forceHigh, 0, 230);
+  b= map(maxspeed, speedLow, speedHigh, 0, 230); 
   c= (a+b)/2;
  }
  float a, b, c;
@@ -41,16 +41,62 @@ class boid{
    return start;
  }
  
+ 
+ void separate(){
+   PVector sum = new PVector();
+   int count=0;
+   float desiredseparation=20;
+   int sizes= gang.length;
+   for (int i=0; i<sizes; i++){
+     float d = PVector.dist(position, gang[i].getPos());
+     if ((d>0) && d<desiredseparation){
+       PVector diff= PVector.sub(position, gang[i].getPos());
+       diff.normalize();
+       sum.add(diff);
+       count++; 
+     }
+   } 
+   
+   if (count>0){
+     sum.div(count);
+     sum.setMag(maxspeed);
+     PVector steer = PVector.sub(sum, velocity);
+     steer.limit(maxforce);
+     applyForce(steer);
+   }
+ }
+ 
  void goTo(PVector target){
 
-   // PVector desired= desiredVelRand(target);
-    PVector desired=PVector.sub(target,  position);
+    PVector desired= desiredVelRand(target);
+ //   PVector desired=PVector.sub(target,  position);
     float d = desired.mag();
     desired.normalize();
     desired.mult(50);
+    /*if (obstructed(desired)){
+     desired.mult(.1); 
+      
+    }*/
     PVector steer = PVector.sub(desired, velocity);
     steer.limit(maxforce);
     applyForce(steer);
+   
+ }
+ 
+ PVector getPos(){
+   return position; 
+ }
+ 
+ boolean obstructed(PVector desired){
+   PVector target = PVector.add(position, desired);
+   int longs=gang.length;
+   for (int i=0; i<longs; i++){
+     PVector finals= PVector.sub(target, gang[i].getPos());
+     if (finals.mag()<2){
+       return true;
+     }
+   }
+      return false;
    
  }
  
@@ -58,12 +104,18 @@ class boid{
   acceleration.add(force); 
  }
  
+ 
+ 
  void drawMe(){
 
-   float size= map(maxspeed, speedLow, speedHigh, 3.2, 2);
-   fill(a, b, c, 140);
-   ellipse(position.x, position.y, size, size);  
+   float size= map(maxspeed, speedLow, speedHigh, 5, 3.5);
+    fill(a, b, c, 180);
+  // fill(0,05,0,160);
+  // stroke(0);
+  // strokeWeight(.2);
    
+    ellipse(position.x, position.y, 10, 10);  
+   //curveVertex(position.x, position.y);
  }
   
  void setVelocity(float x, float y){

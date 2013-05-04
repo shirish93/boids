@@ -1,25 +1,25 @@
 
 boid proto;
 
-float forceLow=.1;
-float forceHigh=0.8;
+float forceLow=.3;
+float forceHigh=0.9;
 float speedLow=4;
-float speedHigh=13;
+float speedHigh=12;
 boid[] gang; 
+HashMap lookup;
+
 int numParticles;
 void setup(){
   //frameRate(90);
   size(1000,700);
   noStroke();
-  numParticles=15000;
+  lookup = new HashMap();
+  numParticles=10000;
   gang= new boid[numParticles];
   float counter=0;
   for (int i=0; i<numParticles; i++){
     gang[i]=new boid(random(width), random(height));
 //    gang[i].setMax((random(8)+3), (random(0.07)+0.01) ); 
-    counter+=0.01;
-    float val= map(noise(counter), 0, 1, forceLow, forceHigh);
-      //  gang[i].setMax((random(speedHigh)+speedLow), val ); 
     gang[i].setMax((random(speedHigh)+speedLow), (random(forceHigh)+forceLow) ); 
   }
   background(255);
@@ -29,13 +29,17 @@ void setup(){
 
 
 void draw(){
-  background(255);
+ // background(255);
+//  background(128, 128, 128, .2);
+  fill(255, 255, 255, 140);
+  rect(0,0, width, height);
   for (int i=0; i<numParticles; i++){
     gang[i].updatePos();
     gang[i].drawMe();
     gang[i].goTo(new PVector(mouseX, mouseY)); 
     
   }
+ 
 }
 
 void mouseMoved(){
@@ -83,7 +87,7 @@ class boid{
  PVector desiredVelRand(PVector target){
    PVector start= PVector.sub(target, position);
    start.normalize();
-   start.mult(40);
+   start.mult(50);
    start.x= position.x+start.x+ 40*cos(radians(random(360)));
    start.y= position.y+start.y+40*sin(radians(random(360)));
    start=start.sub(start, position);
@@ -109,8 +113,8 @@ class boid{
  
  void drawMe(){
 
-   fill(a, b, c, 140);
    float size= map(maxspeed, speedLow, speedHigh, 3.2, 2);
+   fill(a, b, c, 140);
    ellipse(position.x, position.y, size, size);  
    
  }
